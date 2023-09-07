@@ -28,8 +28,9 @@ type ArticleEvent_E_ = variant {
 };
 
 service : {
-    "getEvent": (nat64) -> (opt Event_E_) query;
     "get": (nat) -> (opt Article) query;
     "create": (nat, text, text) -> ();
     "update": (nat, text, text) -> ();
+    "getEvent": (nat64) -> (opt Event_E_) query;
 }
+
