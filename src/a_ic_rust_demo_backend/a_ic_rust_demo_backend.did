@@ -1,3 +1,35 @@
+type Article = record {
+    "article_id" : nat;
+    "version" : nat64;
+    "title" : text;
+    "body" : text;
+};
+
+type ArticleCreated = record {
+    "article_id" : nat;
+    "title" : text;
+    "body" : text;
+};
+
+type ArticleUpdated = record {
+    "article_id" : nat;
+    "version" : nat64;
+    "title" : text;
+    "body" : text;
+};
+
+type Event_E_ = variant {
+    ArticleEvent : ArticleEvent_E_;
+};
+
+type ArticleEvent_E_ = variant {
+    ArticleCreated : ArticleCreated;
+    ArticleUpdated : ArticleUpdated;
+};
+
 service : {
-    "greet": (text) -> (text) query;
+    "getEvent": (nat64) -> (opt Event_E_) query;
+    "get": (nat) -> (opt Article) query;
+    "create": (nat, text, text) -> ();
+    "update": (nat, text, text) -> ();
 }
