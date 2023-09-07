@@ -8,21 +8,16 @@ pub(crate) fn verify(
     title: String,
     body: String,
 ) -> ArticleCreated {
-    ArticleCreated {
-        article_id,
-        title,
-        body,
-    }
+    ArticleCreated { article_id, title, body }
 }
 
 pub(crate) fn mutate(
     article_created: &ArticleCreated
 ) -> Article {
-    let article = Article {
-        article_id: article_created.article_id.clone(),
+    Article {
+        article_id: article_created.article_id,
         version: 0,
         title: article_created.title.clone(),
         body: article_created.body.clone(),
-    };
-    article
+    }
 }
