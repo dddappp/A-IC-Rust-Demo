@@ -6,9 +6,9 @@ use ic_cdk::{
 use ic_stable_structures::{DefaultMemoryImpl, StableBTreeMap, StableLog};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 
-use article::Article;
-
 mod article;
+
+use article::Article;
 
 mod article_create_logic;
 mod article_update_logic;
@@ -61,11 +61,13 @@ fn create(
         title,
         body,
     );
-    let mut article = article_create_logic::mutate(&article_created);
+    let mut article = article_create_logic::mutate(
+        &article_created,
+    );
+    article.version = 0;
     EVENT_STORE.with(|event_store| {
         event_store.borrow_mut().append(&events::Event::ArticleEvent(events::ArticleEvent::ArticleCreated(article_created))).unwrap();
     });
-    article.version = 0;
     ARTICLE_STORE.with(|s| {
         s.borrow_mut().insert(
             article_id,
@@ -89,7 +91,10 @@ fn update(
         body,
         &article,
     );
-    let mut updated_article = article_update_logic::mutate(&article_updated, &article);
+    let mut updated_article = article_update_logic::mutate(
+        &article_updated,
+        &article,
+    );
     updated_article.version = article.version + 1;
     EVENT_STORE.with(|event_store| {
         event_store.borrow_mut().append(&events::Event::ArticleEvent(events::ArticleEvent::ArticleUpdated(article_updated))).unwrap();

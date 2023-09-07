@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use candid::Principal;
 use ic_cdk::{
     export::{
         candid::{CandidType, Decode, Deserialize, Encode},
