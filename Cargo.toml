@@ -1,0 +1,4 @@
+[workspace]
+members = [
+    "src/a_ic_rust_demo_backend",
+]
