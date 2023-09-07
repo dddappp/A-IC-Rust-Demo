@@ -13,8 +13,18 @@ aggregates:
 
     methods:
       Create:
+        isCreationCommand: true
         event:
           name: ArticleCreated
+        parameters:
+          Title:
+            type: String
+          Body:
+            type: String
+
+      Update:
+        event:
+          name: ArticleUpdated
         parameters:
           Title:
             type: String

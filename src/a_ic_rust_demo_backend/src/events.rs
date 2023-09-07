@@ -9,6 +9,7 @@ use ic_cdk::{
 use ic_stable_structures::Storable;
 
 use crate::article::ArticleCreated;
+use crate::article::ArticleUpdated;
 
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub(crate) enum Event {
@@ -18,6 +19,7 @@ pub(crate) enum Event {
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub(crate) enum ArticleEvent {
     ArticleCreated(ArticleCreated),
+    ArticleUpdated(ArticleUpdated),
 }
 
 

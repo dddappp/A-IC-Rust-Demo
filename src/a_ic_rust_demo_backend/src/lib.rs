@@ -6,11 +6,12 @@ use ic_cdk::{
 use ic_stable_structures::{DefaultMemoryImpl, StableBTreeMap, StableLog};
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 
-mod article;
-
 use article::Article;
 
+mod article;
+
 mod article_create_logic;
+mod article_update_logic;
 
 mod events;
 
@@ -60,14 +61,44 @@ fn create(
         title,
         body,
     );
-    let profile = article_create_logic::mutate(&article_created);
+    let mut article = article_create_logic::mutate(&article_created);
     EVENT_STORE.with(|event_store| {
         event_store.borrow_mut().append(&events::Event::ArticleEvent(events::ArticleEvent::ArticleCreated(article_created))).unwrap();
     });
+    article.version = 0;
     ARTICLE_STORE.with(|s| {
         s.borrow_mut().insert(
             article_id,
-            profile,
+            article,
+        );
+    });
+}
+
+#[update(name = "update")]
+fn update(
+    article_id: u128,
+    title: String,
+    body: String,
+) {
+    let mut article: Article = Default::default();
+    ARTICLE_STORE.with(|s| {
+        article = s.borrow().get(&article_id).unwrap();
+    });
+    let article_updated = article_update_logic::verify(
+        title,
+        body,
+        &article,
+    );
+    let mut updated_article = article_update_logic::mutate(&article_updated, &article);
+    updated_article.version = article.version + 1;
+    EVENT_STORE.with(|event_store| {
+        event_store.borrow_mut().append(&events::Event::ArticleEvent(events::ArticleEvent::ArticleUpdated(article_updated))).unwrap();
+    });
+    ARTICLE_STORE.with(|s| {
+        s.borrow_mut().remove(&article_id);
+        s.borrow_mut().insert(
+            article_id,
+            updated_article,
         );
     });
 }

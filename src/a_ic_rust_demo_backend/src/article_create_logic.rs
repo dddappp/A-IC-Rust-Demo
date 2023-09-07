@@ -1,5 +1,4 @@
 use crate::article::{
-    //ProfileId,
     Article,
     ArticleCreated,
 };
@@ -11,13 +10,14 @@ pub(crate) fn verify(
 ) -> ArticleCreated {
     ArticleCreated {
         article_id,
-        version: u64::MAX,
         title,
         body,
     }
 }
 
-pub(crate) fn mutate(article_created: &ArticleCreated) -> Article {
+pub(crate) fn mutate(
+    article_created: &ArticleCreated
+) -> Article {
     let article = Article {
         article_id: article_created.article_id.clone(),
         version: 0,
