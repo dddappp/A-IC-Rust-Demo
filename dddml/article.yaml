@@ -1,0 +1,22 @@
+aggregates:
+  Article:
+    id:
+      name: ArticleId
+      type: u128
+    properties:
+      Title:
+        type: String
+        length: 200
+      Body:
+        type: String
+        length: 1500
+
+    methods:
+      Create:
+        event:
+          name: ArticleCreated
+        parameters:
+          Title:
+            type: String
+          Body:
+            type: String
