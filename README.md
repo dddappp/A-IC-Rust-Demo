@@ -63,9 +63,19 @@ wubuku/dddappp:0.0.1 \
 --icRustCanisterName a_ic_rust_demo_backend
 ```
 
+
+The command parameters above are straightforward:
+
+* The first line indicates mounting your local directory into the `/myapp` directory inside the container.
+* `dddmlDirectoryPath` is the directory where DDDML model files are located. It should be a readable directory path in the container.
+* Interpret the value of parameter `boundedContextName` as the name of your application you want to develop. For this example, this parameter is not currently useful, but must be provided to the CLI. When there are multiple parts in your name, separate them with dots and use PascalCase naming style for each part. Bounded-context is a term in Domain-driven design (DDD) that refers to a specific problem domain scope that contains specific business boundaries, constraints, and language. If you don't understand this concept for now, it's not a big deal.
+* `icRustProjectDirectoryPath` is directory path where IC Rust on-chain contract code is placed. It should be a readable and writable directory path in container.
+* `icRustCanisterName` is name of IC Rust backend canister. It's recommended to use snake_case naming style. Currently the tool will also use it as the name of the `.did` file.
+
+
 ### Implementing Business Logic
 
-It should be noted that in the Move version of our tool, the CURD business logic can be generated automatically and does **not** require you to write it manually as such.
+It **should be noted** that in the Move version of our tool, the CURD business logic can be generated automatically and does **not** require you to write it manually as below.
 
 Open file `src/a_ic_rust_demo_backend/src/article_create_logic.rs`, and implement the business logic of the `Create` method.
 What you need to do is actually fill in the contents of the `verify` and `mutate` functions.:
