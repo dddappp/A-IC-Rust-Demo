@@ -17,11 +17,11 @@ pub(crate) fn verify(
 }
 
 pub(crate) fn mutate(
-    article_created: &ArticleUpdated,
+    article_updated: &ArticleUpdated,
     article: &Article,
 ) -> Article {
     let mut article = article.clone();
-    article.title = article_created.title.clone();
-    article.body = article_created.body.clone();
+    article.title = article_updated.title.clone();
+    article.body = article_updated.body.clone();
     article
 }

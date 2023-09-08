@@ -12,7 +12,7 @@ pub(crate) fn verify(
 }
 
 pub(crate) fn mutate(
-    article_created: &ArticleCreated
+    article_created: &ArticleCreated,
 ) -> Article {
     Article {
         article_id: article_created.article_id,
