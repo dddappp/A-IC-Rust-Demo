@@ -1,26 +1,126 @@
 # a_ic_rust_demo
 
-Welcome to your new a_ic_rust_demo project and to the internet computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+This is a proof of concept for developing IC contracts using low-code tools.
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
-
-To learn more before you start working with a_ic_rust_demo, see the following documentation available online:
-
-- [Quick Start](https://internetcomputer.org/docs/quickstart/quickstart-intro)
-- [SDK Developer Tools](https://internetcomputer.org/docs/developers-guide/sdk-guide)
-- [Rust Canister Devlopment Guide](https://internetcomputer.org/docs/rust-guide/rust-intro)
-- [ic-cdk](https://docs.rs/ic-cdk)
-- [ic-cdk-macros](https://docs.rs/ic-cdk-macros)
-- [Candid Introduction](https://internetcomputer.org/docs/candid-guide/candid-intro)
-- [JavaScript API Reference](https://erxue-5aaaa-aaaab-qaagq-cai.raw.icp0.io)
-
-If you want to start working on your project right away, you might want to try the following commands:
-
-```bash
-cd a_ic_rust_demo/
-dfx help
-dfx canister --help
+```shell
+dfx new --type=rust a_ic_rust_demo
+cd a_ic_rust_demo
+mkdir dddml
 ```
+
+## Programming
+
+### Write DDDML Model File
+
+In the `dddml` directory in the root of the repository, create a DDDML file `artilce.yaml` like this:
+
+```yaml
+aggregates:
+  Article:
+    id:
+      name: ArticleId
+      type: u128
+    properties:
+      Title:
+        type: String
+        length: 200
+      Body:
+        type: String
+        length: 1500
+
+    methods:
+      Create:
+        isCreationCommand: true
+        event:
+          name: ArticleCreated
+        parameters:
+          Title:
+            type: String
+          Body:
+            type: String
+
+      Update:
+        event:
+          name: ArticleUpdated
+        parameters:
+          Title:
+            type: String
+          Body:
+            type: String
+```
+
+### Run dddappp Project Creation Tool
+
+In repository root directory, run:
+
+```shell
+docker run \
+-v .:/myapp \
+wubuku/dddappp:0.0.1 \
+--dddmlDirectoryPath /myapp/dddml \
+--boundedContextName Test.AICRustDemo \
+--icRustProjectDirectoryPath /myapp/src/a_ic_rust_demo_backend \
+--icRustCanisterName a_ic_rust_demo_backend
+```
+
+### Implementing Business Logic
+
+It should be noted that in the Move version of our tool, the CURD business logic can be generated automatically and does **not** require you to write it manually as such.
+
+Open file `src/a_ic_rust_demo_backend/src/article_create_logic.rs`, and implement the business logic of the `Create` method.
+What you need to do is actually fill in the contents of the `verify` and `mutate` functions.:
+
+```rust
+pub(crate) fn verify(
+    article_id: u128,
+    title: String,
+    body: String,
+) -> ArticleCreated {
+    ArticleCreated { article_id, title, body }
+}
+
+pub(crate) fn mutate(
+    article_created: &ArticleCreated,
+) -> Article {
+    Article {
+        article_id: article_created.article_id,
+        version: 0,
+        title: article_created.title.clone(),
+        body: article_created.body.clone(),
+    }
+}
+```
+
+Open file `src/a_ic_rust_demo_backend/src/article_update_logic.rs`, and implement the business logic of the `Update` method.
+
+```rust
+
+pub(crate) fn verify(
+    title: String,
+    body: String,
+    article: &Article,
+) -> ArticleUpdated {
+    ArticleUpdated {
+        article_id: article.article_id,
+        version: article.version,
+        title,
+        body,
+    }
+}
+
+pub(crate) fn mutate(
+    article_updated: &ArticleUpdated,
+    article: &Article,
+) -> Article {
+    let mut article = article.clone();
+    article.title = article_updated.title.clone();
+    article.body = article_updated.body.clone();
+    article
+}
+```
+
+Now you can build and deploy your backend canister.
+
 
 ## Running the project locally
 
@@ -30,38 +130,12 @@ If you want to test your project locally, you can use the following commands:
 # Starts the replica, running in the background
 dfx start --background
 
-# Deploys your canisters to the replica and generates your candid interface
-dfx deploy
+dfx deploy a_ic_rust_demo_backend
 ```
 
-Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
+### Tests
 
-If you have made changes to your backend canister, you can generate a new candid interface with
-
-```bash
-npm run generate
-```
-
-at any time. This is recommended before starting the frontend development server, and will be run automatically any time you run `dfx deploy`.
-
-If you are making frontend changes, you can start a development server with
-
-```bash
-npm start
-```
-
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
-
-### Note on frontend environment variables
-
-If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
-
-- set`DFX_NETWORK` to `production` if you are using Webpack
-- use your own preferred method to replace `process.env.DFX_NETWORK` in the autogenerated declarations
-  - Setting `canisters -> {asset_canister_id} -> declarations -> env_override to a string` in `dfx.json` will replace `process.env.DFX_NETWORK` with the string in the autogenerated declarations
-- Write your own `createActor` constructor
-
----
+Now you can use the dfx command line tool for testing:
 
 ```shell
 dfx canister call a_ic_rust_demo_backend create '(1, "Hello", "World")'
@@ -72,3 +146,25 @@ dfx canister call a_ic_rust_demo_backend get '(2)'
 dfx canister call a_ic_rust_demo_backend getEvent '(0)'
 dfx canister call a_ic_rust_demo_backend getEvent '(2)'
 ```
+
+## Tips
+
+This example is simple and has very limited support for the DDDML specification.
+
+But with it, we can believe that if the IC version of the tool has the features that the Move version already has, 
+it can be an amazing improvement in development efficiency when developing certain applications.
+
+### Update dddappp Docker Image
+
+Since the dddappp v0.0.1 image is updated frequently, you may be required to manually delete the image and pull it again before `docker run`.
+
+```shell
+# If you have already run it, you may need to Clean Up Exited Docker Containers first
+docker rm $(docker ps -aq --filter "ancestor=wubuku/dddappp:0.0.1")
+# remove the image
+docker image rm wubuku/dddappp:0.0.1
+# pull the image
+git pull wubuku/dddappp:0.0.1
+```
+
+
