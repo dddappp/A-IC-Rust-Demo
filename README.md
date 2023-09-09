@@ -8,6 +8,18 @@ cd a_ic_rust_demo
 mkdir dddml
 ```
 
+Add dependencies to the file `src/a_ic_rust_demo_backend/Cargo.toml`:
+
+```toml
+[dependencies]
+candid = "0.8"
+ic-cdk = "0.7"
+ic-cdk-timers = "0.1" # Feel free to remove this dependency if you don't need timers
+# Add the following two lines
+ic-stable-structures = "0.5.4"
+serde = "1.0"
+```
+
 ## Programming
 
 ### Write DDDML Model File
