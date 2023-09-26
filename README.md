@@ -29,6 +29,11 @@ In the `dddml` directory in the root of the repository, create a DDDML file `art
 ```yaml
 aggregates:
   Article:
+    metadata:
+      # The following two lines indicate that the tool should automatically generate the Create and Update methods,
+      # but not the Delete method.
+      Preprocessors: [ "MOVE_CRUD_IT" ]
+      CRUD_IT_NO_DELETE: true
     id:
       name: ArticleId
       type: u128
@@ -39,27 +44,36 @@ aggregates:
       Body:
         type: String
         length: 1500
-
     methods:
-      Create:
-        isCreationCommand: true
+      UpdateBody:
         event:
-          name: ArticleCreated
+          name: ArticleBodyUpdated
         parameters:
-          Title:
-            type: String
           Body:
             type: String
 
-      Update:
-        event:
-          name: ArticleUpdated
-        parameters:
-          Title:
-            type: String
-          Body:
-            type: String
+#      Create:
+#        isCreationCommand: true
+#        event:
+#          name: ArticleCreated
+#        parameters:
+#          Title:
+#            type: String
+#          Body:
+#            type: String
+#      Update:
+#        event:
+#          name: ArticleUpdated
+#        parameters:
+#          Title:
+#            type: String
+#          Body:
+#            type: String
 ```
+
+You may have noticed the comments in the code above. 
+If the "business logic" you need is CRUD, we don't actually need to write it. 
+We can specify tools to automatically generate it.
 
 ### Run dddappp Project Creation Tool
 
@@ -75,7 +89,6 @@ wubuku/dddappp:0.0.1 \
 --icRustCanisterName a_ic_rust_demo_backend
 ```
 
-
 The command parameters above are straightforward:
 
 * The first line indicates mounting your local directory into the `/myapp` directory inside the container.
@@ -87,59 +100,34 @@ The command parameters above are straightforward:
 
 ### Implementing Business Logic
 
-It **should be noted** that in the Move version of our tool, the CURD business logic can be generated automatically and does **not** require you to write it manually as below.
+Open file `src/a_ic_rust_demo_backend/src/article_update_body_logic.rs`, and implement the business logic of the `UpdateBody` method.
 
-Open file `src/a_ic_rust_demo_backend/src/article_create_logic.rs`, and implement the business logic of the `Create` method.
 What you need to do is actually fill in the contents of the `verify` and `mutate` functions.:
 
 ```rust
 pub(crate) fn verify(
-    article_id: u128,
-    title: String,
-    body: String,
-) -> ArticleCreated {
-    ArticleCreated { article_id, title, body }
-}
-
-pub(crate) fn mutate(
-    article_created: &ArticleCreated,
-) -> Article {
-    Article {
-        article_id: article_created.article_id,
-        version: 0,
-        title: article_created.title.clone(),
-        body: article_created.body.clone(),
-    }
-}
-```
-
-Open file `src/a_ic_rust_demo_backend/src/article_update_logic.rs`, and implement the business logic of the `Update` method.
-
-```rust
-
-pub(crate) fn verify(
-    title: String,
     body: String,
     article: &Article,
-) -> ArticleUpdated {
-    ArticleUpdated {
+) -> ArticleBodyUpdated {
+    ArticleBodyUpdated {
         article_id: article.article_id,
         version: article.version,
-        title,
         body,
     }
 }
 
 pub(crate) fn mutate(
-    article_updated: &ArticleUpdated,
+    article_body_updated: &ArticleBodyUpdated,
     article: Article,
 ) -> Article {
     let mut article = article.clone();
-    article.title = article_updated.title.clone();
-    article.body = article_updated.body.clone();
+    article.body = article_body_updated.body.clone();
     article
 }
 ```
+
+If you open the files `src/a_ic_rust_demo_backend/src/article_create_logic.rs` and `src/a_ic_rust_demo_backend/src/article_update_logic.rs`, 
+you will find that the tool has generated the business logic for the `Create` and `Update` methods.
 
 Now you can build and deploy your backend canister.
 
