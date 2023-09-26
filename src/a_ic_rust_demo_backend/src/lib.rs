@@ -13,11 +13,11 @@ use article::Article;
 mod article_create_logic;
 mod article_update_logic;
 
-mod events;
+mod event;
 
 type Memory = VirtualMemory<DefaultMemoryImpl>;
 
-type EventStore = StableLog<events::Event, Memory, Memory>;
+type EventStore = StableLog<event::Event, Memory, Memory>;
 
 type ArticleStore = StableBTreeMap<u128, Article, Memory>;
 
@@ -66,7 +66,7 @@ fn create(
     );
     article.version = 0;
     EVENT_STORE.with(|event_store| {
-        event_store.borrow_mut().append(&events::Event::ArticleEvent(events::ArticleEvent::ArticleCreated(article_created))).unwrap();
+        event_store.borrow_mut().append(&event::Event::ArticleEvent(event::ArticleEvent::ArticleCreated(article_created))).unwrap();
     });
     ARTICLE_STORE.with(|s| {
         s.borrow_mut().insert(
@@ -97,7 +97,7 @@ fn update(
     );
     updated_article.version = article.version + 1;
     EVENT_STORE.with(|event_store| {
-        event_store.borrow_mut().append(&events::Event::ArticleEvent(events::ArticleEvent::ArticleUpdated(article_updated))).unwrap();
+        event_store.borrow_mut().append(&event::Event::ArticleEvent(event::ArticleEvent::ArticleUpdated(article_updated))).unwrap();
     });
     ARTICLE_STORE.with(|s| {
         s.borrow_mut().remove(&article_id);
@@ -109,7 +109,7 @@ fn update(
 }
 
 #[query(name = "getEvent")]
-fn get_event(idx: u64) -> Option<events::Event> {
+fn get_event(idx: u64) -> Option<event::Event> {
     EVENT_STORE.with(|event_store| {
         event_store.borrow().get(idx)
     })
