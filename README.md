@@ -97,6 +97,14 @@ The command parameters above are straightforward:
 * `icRustProjectDirectoryPath` is directory path where IC Rust on-chain contract code is placed. It should be a readable and writable directory path in container.
 * `icRustCanisterName` is name of IC Rust backend canister. It's recommended to use snake_case naming style. Currently the tool will also use it as the name of the `.did` file.
 
+> **Tip**
+> 
+> Since the dddappp v0.0.1 image is updated frequently, 
+> if you have run this image before, 
+> you may be required to manually delete the image and pull it again before `docker run`.
+> You can use the shell commands in the "Tips" section below to do this.
+> 
+
 
 ### Implementing Business Logic
 
@@ -132,7 +140,7 @@ you will find that the tool has generated the business logic for the `Create` an
 Now you can build and deploy your backend canister.
 
 
-## Running the project locally
+## Test the project locally
 
 If you want to test your project locally, you can use the following commands:
 
@@ -166,7 +174,7 @@ it can be an amazing improvement in development efficiency when developing certa
 
 ### Update dddappp Docker Image
 
-Since the dddappp v0.0.1 image is updated frequently, you may be required to manually delete the image and pull it again before `docker run`.
+Use the following commands to clean up old containers re-pull the image.
 
 ```shell
 # If you have already run it, you may need to Clean Up Exited Docker Containers first
