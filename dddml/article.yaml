@@ -15,8 +15,14 @@ aggregates:
       Body:
         type: String
         length: 1500
-
     methods:
+      UpdateBody:
+        event:
+          name: ArticleBodyUpdated
+        parameters:
+          Body:
+            type: String
+
 #      Create:
 #        isCreationCommand: true
 #        event:

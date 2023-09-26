@@ -36,6 +36,13 @@ impl BoundedStorable for Article {
 }
 
 #[derive(Clone, Debug, CandidType, Deserialize)]
+pub(crate) struct ArticleBodyUpdated {
+    pub article_id: u128,
+    pub version: u64,
+    pub body: String,
+}
+
+#[derive(Clone, Debug, CandidType, Deserialize)]
 pub(crate) struct ArticleCreated {
     pub article_id: u128,
     pub title: String,

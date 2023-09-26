@@ -10,6 +10,7 @@ mod article;
 
 use article::Article;
 
+mod article_update_body_logic;
 mod article_create_logic;
 mod article_update_logic;
 
@@ -48,6 +49,37 @@ fn get(article_id: u128) -> Option<Article> {
     ARTICLE_STORE.with(|s| {
         s.borrow().get(&article_id)
     })
+}
+
+#[update(name = "updateBody")]
+fn update_body(
+    article_id: u128,
+    body: String,
+) {
+    let mut article: Article = Default::default();
+    ARTICLE_STORE.with(|s| {
+        article = s.borrow_mut().remove(&article_id).unwrap();
+    });
+    let old_version = article.version;
+    let mut article_body_updated = article_update_body_logic::verify(
+        body,
+        &article,
+    );
+    article_body_updated.version = old_version;
+    let mut updated_article = article_update_body_logic::mutate(
+        &article_body_updated,
+        article,
+    );
+    updated_article.version = old_version + 1;
+    EVENT_STORE.with(|event_store| {
+        event_store.borrow_mut().append(&event::Event::ArticleEvent(event::ArticleEvent::ArticleBodyUpdated(article_body_updated))).unwrap();
+    });
+    ARTICLE_STORE.with(|s| {
+        s.borrow_mut().insert(
+            article_id,
+            updated_article,
+        );
+    });
 }
 
 #[update(name = "create")]

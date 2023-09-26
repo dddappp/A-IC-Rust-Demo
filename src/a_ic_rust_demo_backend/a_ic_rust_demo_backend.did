@@ -5,6 +5,12 @@ type Article = record {
     "body" : text;
 };
 
+type ArticleBodyUpdated = record {
+    "article_id" : nat;
+    "version" : nat64;
+    "body" : text;
+};
+
 type ArticleCreated = record {
     "article_id" : nat;
     "title" : text;
@@ -23,12 +29,14 @@ type Event_E_ = variant {
 };
 
 type ArticleEvent_E_ = variant {
+    ArticleBodyUpdated : ArticleBodyUpdated;
     ArticleCreated : ArticleCreated;
     ArticleUpdated : ArticleUpdated;
 };
 
 service : {
     "get": (nat) -> (opt Article) query;
+    "updateBody": (nat, text) -> ();
     "create": (nat, text, text) -> ();
     "update": (nat, text, text) -> ();
     "getEvent": (nat64) -> (opt Event_E_) query;
