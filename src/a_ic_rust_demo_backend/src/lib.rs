@@ -88,6 +88,9 @@ fn create(
     title: String,
     body: String,
 ) {
+    ARTICLE_STORE.with(|s| {
+        assert!(!s.borrow().contains_key(&article_id), "article_id already exists");
+    });
     let article_created = article_create_logic::verify(
         article_id,
         title,
