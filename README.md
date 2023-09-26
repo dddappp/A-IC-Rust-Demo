@@ -72,8 +72,8 @@ aggregates:
 ```
 
 You may have noticed the comments in the code above. 
-If the "business logic" you need is CRUD, we don't actually need to write it. 
-We can specify tools to automatically generate it.
+If the "business logic" you need is CRUD, you don't actually need to write it. 
+You can specify the tool to automatically generate it.
 
 ### Run dddappp Project Creation Tool
 
