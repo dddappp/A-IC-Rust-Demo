@@ -1,5 +1,8 @@
 aggregates:
   Article:
+    metadata:
+      Preprocessors: [ "MOVE_CRUD_IT" ]
+      CRUD_IT_NO_DELETE: true
     id:
       name: ArticleId
       type: u128
@@ -12,21 +15,22 @@ aggregates:
         length: 1500
 
     methods:
-      Create:
-        isCreationCommand: true
-        event:
-          name: ArticleCreated
-        parameters:
-          Title:
-            type: String
-          Body:
-            type: String
+#      Create:
+#        isCreationCommand: true
+#        event:
+#          name: ArticleCreated
+#        parameters:
+#          Title:
+#            type: String
+#          Body:
+#            type: String
+#
+#      Update:
+#        event:
+#          name: ArticleUpdated
+#        parameters:
+#          Title:
+#            type: String
+#          Body:
+#            type: String
 
-      Update:
-        event:
-          name: ArticleUpdated
-        parameters:
-          Title:
-            type: String
-          Body:
-            type: String

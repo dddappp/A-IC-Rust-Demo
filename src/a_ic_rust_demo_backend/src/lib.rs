@@ -87,11 +87,12 @@ fn update(
         article = s.borrow_mut().remove(&article_id).unwrap();
     });
     let old_version = article.version;
-    let article_updated = article_update_logic::verify(
+    let mut article_updated = article_update_logic::verify(
         title,
         body,
         &article,
     );
+    article_updated.version = old_version;
     let mut updated_article = article_update_logic::mutate(
         &article_updated,
         article,
