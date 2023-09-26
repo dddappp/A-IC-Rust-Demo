@@ -1,6 +1,8 @@
 aggregates:
   Article:
     metadata:
+      # The following two lines indicate that the tool should automatically generate the Create and Update methods,
+      # but not the Delete method.
       Preprocessors: [ "MOVE_CRUD_IT" ]
       CRUD_IT_NO_DELETE: true
     id:
