@@ -82,16 +82,16 @@ fn update(
     title: String,
     body: String,
 ) {
-    let article: Article = Default::default();
+    let mut article: Article = Default::default();
     ARTICLE_STORE.with(|s| {
-        s.borrow_mut().remove(&article_id);
+        article = s.borrow_mut().remove(&article_id).unwrap();
     });
+    let old_version = article.version;
     let article_updated = article_update_logic::verify(
         title,
         body,
         &article,
     );
-    let old_version = article.version;
     let mut updated_article = article_update_logic::mutate(
         &article_updated,
         article,
@@ -101,7 +101,6 @@ fn update(
         event_store.borrow_mut().append(&event::Event::ArticleEvent(event::ArticleEvent::ArticleUpdated(article_updated))).unwrap();
     });
     ARTICLE_STORE.with(|s| {
-
         s.borrow_mut().insert(
             article_id,
             updated_article,
