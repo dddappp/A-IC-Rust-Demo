@@ -132,7 +132,7 @@ pub(crate) fn verify(
 
 pub(crate) fn mutate(
     article_updated: &ArticleUpdated,
-    article: &Article,
+    article: Article,
 ) -> Article {
     let mut article = article.clone();
     article.title = article_updated.title.clone();
