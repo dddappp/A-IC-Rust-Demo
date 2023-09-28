@@ -65,11 +65,13 @@ fn update_body(
         body,
         &article,
     );
+    article_body_updated.article_id = article_id;
     article_body_updated.version = old_version;
     let mut updated_article = article_update_body_logic::mutate(
         &article_body_updated,
         article,
     );
+    updated_article.article_id = article_id;
     updated_article.version = old_version + 1;
     EVENT_STORE.with(|event_store| {
         event_store.borrow_mut().append(&event::Event::ArticleEvent(event::ArticleEvent::ArticleBodyUpdated(article_body_updated))).unwrap();
@@ -96,10 +98,10 @@ fn create(
         title,
         body,
     );
+    article_created.article_id = article_id;
     let mut article = article_create_logic::mutate(
         &article_created,
     );
-    article_created.article_id = article_id;
     article.article_id = article_id;
     article.version = 0;
     EVENT_STORE.with(|event_store| {
