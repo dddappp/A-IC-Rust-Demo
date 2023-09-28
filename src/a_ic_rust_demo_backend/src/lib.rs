@@ -91,7 +91,7 @@ fn create(
     ARTICLE_STORE.with(|s| {
         assert!(!s.borrow().contains_key(&article_id), "article_id already exists");
     });
-    let article_created = article_create_logic::verify(
+    let mut article_created = article_create_logic::verify(
         article_id,
         title,
         body,
@@ -99,6 +99,8 @@ fn create(
     let mut article = article_create_logic::mutate(
         &article_created,
     );
+    article_created.article_id = article_id;
+    article.article_id = article_id;
     article.version = 0;
     EVENT_STORE.with(|event_store| {
         event_store.borrow_mut().append(&event::Event::ArticleEvent(event::ArticleEvent::ArticleCreated(article_created))).unwrap();
@@ -127,11 +129,13 @@ fn update(
         body,
         &article,
     );
+    article_updated.article_id = article_id;
     article_updated.version = old_version;
     let mut updated_article = article_update_logic::mutate(
         &article_updated,
         article,
     );
+    updated_article.article_id = article_id;
     updated_article.version = old_version + 1;
     EVENT_STORE.with(|event_store| {
         event_store.borrow_mut().append(&event::Event::ArticleEvent(event::ArticleEvent::ArticleUpdated(article_updated))).unwrap();
