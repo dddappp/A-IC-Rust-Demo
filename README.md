@@ -1,6 +1,11 @@
-# a_ic_rust_demo
+# A IC Rust Demo
 
-This is a proof of concept for developing IC contracts using low-code tools.
+This is a proof of concept for developing IC contracts using dddappp low-code tool.
+
+
+## Programming
+
+### New a Project
 
 ```shell
 dfx new --type=rust a_ic_rust_demo
@@ -19,8 +24,6 @@ ic-cdk-timers = "0.1" # Feel free to remove this dependency if you don't need ti
 ic-stable-structures = "0.5.4"
 serde = "1.0"
 ```
-
-## Programming
 
 ### Write DDDML Model File
 
@@ -106,7 +109,7 @@ The command parameters above are straightforward:
 > 
 
 
-### Implementing Business Logic
+### Implementing Customized Business Logic
 
 Open file `src/a_ic_rust_demo_backend/src/article_update_body_logic.rs`, and implement the business logic of the `UpdateBody` method.
 
@@ -140,9 +143,11 @@ you will find that the tool has generated the business logic for the `Create` an
 Now you can build and deploy your backend canister.
 
 
-## Test the project locally
+## Test the Project locally
 
-If you want to test your project locally, you can use the following commands:
+If you want to test your project locally, you can use the following commands.
+
+### Start Local Dev Replica
 
 ```bash
 # Starts the replica, running in the background
@@ -151,7 +156,7 @@ dfx start --background
 dfx deploy a_ic_rust_demo_backend
 ```
 
-### Tests
+### CLI Tests
 
 Now you can use the dfx command line tool for testing:
 
@@ -186,6 +191,10 @@ git pull wubuku/dddappp:0.0.1
 ```
 
 ## Move Version Examples
+
+###  Blog Example for Sui
+
+See it [here](https://github.com/dddappp/sui-blog-example). It only requires 30 or so lines of code (all of which is a description of the domain model) to be written by the developer, and then generates a blog example that emulates [RoR Getting Started](https://guides.rubyonrails.org/getting_started.html) in one click, without requiring the developer to write a single line of other code.
 
 ### Blog Example for Rooch
 
